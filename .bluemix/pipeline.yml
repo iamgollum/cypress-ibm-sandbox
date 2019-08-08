@@ -11,7 +11,7 @@ stages:
   - name: Build
     type: builder
 - name: ACCEPTANCE
-- inputs:
+  inputs:
   - type: job
     stage: BUILD
     job: Build 
