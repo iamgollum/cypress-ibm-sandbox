@@ -17,14 +17,14 @@ stages:
     job: Build 
   triggers:
   - type: stage
-  jobs:
-    - name: Acceptance Test
+jobs:
+  - name: Acceptance Test
     type: tester
-    fail_stage: true
-    curatedDockerImage: cypress/base:latest
+    build_type: customimage
+    docker_image: cypress/base:latest 
     script: |
       #!/bin/bash
-      # Reinstall for binary that was not captured with build output
+      # Reinstall for binary that was not captured with build output ... can you cache?
       npm install cypress
       npm run test:ci
 - name: DEPLOY
