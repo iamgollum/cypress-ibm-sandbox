@@ -13,11 +13,11 @@ template:
     - sample-repo
   info:
     git url: >-
-      [https://github.com/cypress-io/cypress-example-kitchensink](https://github.com/cypress-io/cypress-example-kitchensink)
+      [https://github.com/cypress-io/cypress-ibm-sandbox](https://github.com/cypress-io/cypress-ibm-sandbox)
     git branch: >-
-      [master](https://github.com/cypress-io/cypress-example-kitchensink/tree/master)
+      [master](https://github.com/cypress-io/cypress-ibm-sandbox/tree/master)
 toolchain:
-  name: 'cypress-kitchensink-{{timestamp}}'
+  name: 'cypress-kitchensink'
   template:
     getting_started:
       $ref: "#/messages/template.gettingStarted"
@@ -26,8 +26,8 @@ services:
     service_id: githubpublic
     parameters:
       repo_name: '{{toolchain.name}}'
-      repo_url: 'https://github.com/cypress-io/cypress-example-kitchensink'
-      type: clone
+      repo_url: 'https://github.com/cypress-io/cypress-ibm-sandbox'
+      type: existing
       has_issues: true
       enable_traceability: true
   sample-build:

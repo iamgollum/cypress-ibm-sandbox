@@ -19,7 +19,7 @@ stages:
   - type: stage
 jobs:
   - name: Acceptance Test
-    type: tester
+    type: builder
     build_type: customimage
     docker_image: cypress/base:latest 
     script: |
