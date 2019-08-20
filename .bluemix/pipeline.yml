@@ -6,22 +6,23 @@ stages:
     branch: master
     service: ${SAMPLE_REPO}
   triggers:
-  - type: commit
+  - type: git
+    events: push pull_request pull_request_closed
   jobs:
   - name: Build
     type: builder
 - name: ACCEPTANCE
-- inputs:
+  inputs:
   - type: job
     stage: BUILD
     job: Build 
   triggers:
   - type: stage
-jobs:
+  jobs:
   - name: Acceptance Test
-    type: tester
+    type: builder
     build_type: customimage
-    docker_image: cypress/base:latest 
+    docker_image: cypress/base:latest
     script: |
       #!/bin/bash
       # Reinstall for binary that was not captured with build output ... can you cache?
@@ -34,6 +35,7 @@ jobs:
     job: Build
   triggers:
   - type: stage
+    enabled: false
   properties:
   - name: CF_APP_NAME
     value: undefined
@@ -42,7 +44,7 @@ jobs:
     value: undefined
     type: text
   jobs:
-  - name: Blue-Green Deploy
+  - name: Rolling Deploy
     type: deployer
     target:
       region_id: ${PROD_REGION_ID}
@@ -77,4 +79,3 @@ jobs:
       export APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print $2}')
       # View logs
       #cf logs "${CF_APP}" --recent
-      
