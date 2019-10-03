@@ -6,49 +6,67 @@
     "title": {
         "$ref": "#/messages/deploy.title"
     },
-    "description": {
-        "$ref": "#/messages/deploy.description"
-    },
     "longDescription": {
         "$ref": "#/messages/deploy.longDescription"
     },
     "type": "object",
     "properties": {
-        "prod-region": {
-            "description": "The bluemix region",
-            "type": "string"
+        "dev-region": {
+            "description": {
+                "$ref": "#/messages/deploy.region"
+            },
+            "type": "string",
+            "validator": {
+                "v-type": "cf-region",
+                "params": ["api-key"]
+            }
         },
-        "prod-organization": {
-            "description": "The bluemix org",
-            "type": "string"
+        "dev-organization": {
+            "description": {
+                "$ref": "#/messages/deploy.org"
+            },
+            "type": "string",
+            "validator": {
+                "v-type": "cf-org",
+                "params": ["dev-region"]
+            }
         },
-        "prod-space": {
-            "description": "The bluemix space",
-            "type": "string"
+        "dev-space": {
+            "description": {
+                "$ref": "#/messages/deploy.space"
+            },
+            "type": "string",
+            "validator": {
+                "v-type": "cf-space",
+                "params": ["dev-organization"]
+            }
         },
         "api-key": {
-            "description": "API key description",
-            "type": "string"
+            "description": {
+                "$ref": "#/messages/deploy.apiKeyDescription"
+            },
+            "type": "string",
+            "validator": {
+                "v-type": "api-key"
+            }
         },
-        "prod-app-name": {
+        "app-name": {
             "description": {
                 "$ref": "#/messages/deploy.appDescription"
             },
-            "type": "string",
-            "pattern": "\\S"
+            "type": "string"
         }
     },
     "required": [
-        "prod-region",
-        "prod-organization",
-        "prod-space",
-        "prod-app-name",
+        "dev-region",
+        "dev-organization",
+        "dev-space",
+        "app-name",
         "api-key"
     ],
-    "form": [
-        {
+    "form": [{
             "type": "validator",
-            "url": "/devops/setup/bm-helper/helper.html"
+            "url": "/devops/validator/validator-v1.html"
         },
         {
             "type": "text",
@@ -56,29 +74,25 @@
             "title": {
                 "$ref": "#/messages/deploy.appName"
             },
-            "key": "prod-app-name"
+            "key": "app-name"
         },
         {
-	        "type": "password",
-	        "readonly": false,
-	        "title": "IBM Cloud API Key",
-	        "key": "api-key"
+            "type": "password",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.apiKeyTitle"
+            },
+            "key": "api-key"
         },
         {
             "type": "table",
-            "columnCount": 4,
+            "columnCount": 3,
             "widths": [
-                "15%",
                 "28%",
                 "28%",
                 "28%"
             ],
-            "items": [
-                {
-                    "type": "label",
-                    "title": ""
-                },
-                {
+            "items": [{
                     "type": "label",
                     "title": {
                         "$ref": "#/messages/region"
@@ -97,22 +111,16 @@
                     }
                 },
                 {
-                    "type": "label",
-                    "title": {
-                        "$ref": "#/messages/prodStage"
-                    }
+                    "type": "select",
+                    "key": "dev-region"
                 },
                 {
                     "type": "select",
-                    "key": "prod-region"
+                    "key": "dev-organization"
                 },
                 {
                     "type": "select",
-                    "key": "prod-organization"
-                },
-                {
-                    "type": "select",
-                    "key": "prod-space",
+                    "key": "dev-space",
                     "readonly": false
                 }
             ]
