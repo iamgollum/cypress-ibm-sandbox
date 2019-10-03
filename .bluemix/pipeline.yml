@@ -1,79 +1,32 @@
 ---
 stages:
-- name: BUILD
+- name: Build Stage
   inputs:
   - type: git
-    branch: master
-    service: ${SAMPLE_REPO}
-  triggers:
-  - type: commit
+    branch: ${BRANCH}
+    service: ${REPO}
   jobs:
   - name: Build
     type: builder
-- name: ACCEPTANCE
-- inputs:
-  - type: job
-    stage: BUILD
-    job: Build 
-  triggers:
-  - type: stage
-jobs:
-  - name: Acceptance Test
-    type: builder
-    build_type: customimage
-    docker_image: cypress/base:latest
-    script: |
-      #!/bin/bash
-      # Reinstall for binary that was not captured with build output ... can you cache?
-      npm install cypress
-      npm run test:ci
-- name: DEPLOY
+    artifact_dir: ''
+- name: Deploy Stage
   inputs:
   - type: job
-    stage: BUILD
+    stage: Build Stage
     job: Build
   triggers:
   - type: stage
-  properties:
-  - name: CF_APP_NAME
-    value: undefined
-    type: text
-  - name: APP_URL
-    value: undefined
-    type: text
   jobs:
-  - name: Blue-Green Deploy
+  - name: Deploy
     type: deployer
     target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME}
+      region_id: ${CF_REGION_ID}
+      organization: ${CF_ORGANIZATION}
+      space: ${CF_SPACE}
+      application: ${CF_APP}
       api_key: ${API_KEY}
-    script: |
+    script: |-
       #!/bin/bash
-      # Push app
-      if ! cf app $CF_APP; then  
-        cf push $CF_APP
-      else
-        OLD_CF_APP=${CF_APP}-OLD-$(date +"%s")
-        rollback() {
-          set +e  
-          if cf app $OLD_CF_APP; then
-            cf logs $CF_APP --recent
-            cf delete $CF_APP -f
-            cf rename $OLD_CF_APP $CF_APP
-          fi
-          exit 1
-        }
-        set -e
-        trap rollback ERR
-        cf rename $CF_APP $OLD_CF_APP
-        cf push $CF_APP
-        cf delete $OLD_CF_APP -f
-      fi
-      # Export app name and URL for use in later Pipeline jobs
-      export CF_APP_NAME="$CF_APP"
-      export APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print $2}')
+      cf push "${CF_APP}"
       # View logs
-      #cf logs "${CF_APP}" --recent
+      # cf logs "${CF_APP}" --recent
