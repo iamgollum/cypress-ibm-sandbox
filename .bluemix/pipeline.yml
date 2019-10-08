@@ -55,6 +55,6 @@ stages:
       api_key: ${API_KEY}
     script: |-
       #!/bin/bash
-      cf push "${CF_APP}" -m 256M
+      cf push "${CF_APP}"
       # View logs
       # cf logs "${CF_APP}" --recent
